@@ -1,0 +1,7 @@
+.idea
+.vscode
+*.exe
+
+config/dev.go
+go.mod
+go.sum
