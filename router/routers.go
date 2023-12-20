@@ -1,13 +1,13 @@
 package router
 
 import (
-	"context"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/redis/go-redis/v9"
-	"github.com/wfanxin/go-service/config"
+	"github.com/wfanxin/go-service/db"
+	"github.com/wfanxin/go-service/models"
 )
 
 func Router() *gin.Engine {
@@ -26,25 +26,30 @@ func Router() *gin.Engine {
 	})
 
 	r.GET("/redis", func(c *gin.Context) {
-		client := redis.NewClient(&redis.Options{
-			Addr:     fmt.Sprintf("%v:%v", config.Redis.Host, config.Redis.Port),
-			Password: config.Redis.Password,
-			DB:       config.Redis.Database,
-		})
-		ctx := context.Background()
-
-		err := client.Set(ctx, "name", "徐恩光", 0).Err()
+		err := db.Redis.Set(db.Ctx, "name", "徐恩光", 0).Err()
 		if err != nil {
 			panic(err)
 		}
 
-		name, err := client.Get(ctx, "name").Result()
+		name, err := db.Redis.Get(db.Ctx, "name").Result()
 		if err != nil {
 			panic(err)
 		}
 
 		c.JSON(http.StatusOK, gin.H{
-			"message": name,
+			"message": "redis" + name,
+		})
+	})
+
+	r.GET("/mysql", func(c *gin.Context) {
+		idstr := c.DefaultQuery("id", "0")
+		id, _ := strconv.Atoi(idstr)
+		user, _ := models.GetUser(id)
+
+		fmt.Println(user)
+
+		c.JSON(http.StatusOK, gin.H{
+			"message": "mysql:id->" + idstr,
 		})
 	})
 
