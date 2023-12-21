@@ -3,5 +3,6 @@
 *.exe
 
 config/dev.go
+config/env.ini
 go.mod
 go.sum

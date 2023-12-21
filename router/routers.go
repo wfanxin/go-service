@@ -1,7 +1,6 @@
 package router
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -11,6 +10,7 @@ import (
 )
 
 func Router() *gin.Engine {
+	// gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
 
 	r.GET("/ping", func(c *gin.Context) {
@@ -46,10 +46,8 @@ func Router() *gin.Engine {
 		id, _ := strconv.Atoi(idstr)
 		user, _ := models.GetUser(id)
 
-		fmt.Println(user)
-
 		c.JSON(http.StatusOK, gin.H{
-			"message": "mysql:id->" + idstr,
+			"message": user,
 		})
 	})
 

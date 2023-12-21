@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/redis/go-redis/v9"
-	"github.com/wfanxin/go-service/config"
+	"gopkg.in/ini.v1"
 )
 
 var (
@@ -14,11 +14,21 @@ var (
 )
 
 func init() {
+	file, err := ini.Load("./config/env.ini")
+	if err != nil {
+		fmt.Printf("env.ini读取失败：%v\n", err)
+	}
+
 	Redis = redis.NewClient(&redis.Options{
-		Addr:     fmt.Sprintf("%v:%v", config.Redis.Host, config.Redis.Port),
-		Password: config.Redis.Password,
-		DB:       config.Redis.Database,
+		Addr:     fmt.Sprintf("%v:%v", file.Section("redis").Key("host"), file.Section("redis").Key("port")),
+		Password: file.Section("redis").Key("password").String(),
+		DB:       file.Section("redis").Key("database").MustInt(),
 	})
 
 	Ctx = context.Background()
+
+	_, err = Redis.Ping(Ctx).Result()
+	if err != nil {
+		panic(fmt.Sprintf("redis连接失败：%v", err))
+	}
 }
