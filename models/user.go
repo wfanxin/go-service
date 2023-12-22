@@ -1,22 +1,18 @@
 package models
 
 import (
-	"database/sql"
 	"time"
 
 	"github.com/wfanxin/go-service/db"
 )
 
 type User struct {
-	ID           uint
-	Name         string
-	Email        *string
-	Age          uint8
-	Birthday     time.Time
-	MemberNumber sql.NullString
-	ActivatedAt  sql.NullTime
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
+	ID        int
+	Mobile    string    `gorm:"size:20"`
+	Name      string    `gorm:"size:100"`
+	Avatar    string    `gorm:"size:200"`
+	CreatedAt time.Time `gorm:"autoCreateTime"`
+	UpdatedAt time.Time `gorm:"autoUpdateTime"`
 }
 
 func (User) TableName() string {
@@ -27,4 +23,11 @@ func GetUser(id int) (User, error) {
 	var user User
 	err := db.Mysql.First(&user, "id = ?", id).Error
 	return user, err
+}
+
+func CreateUser() {
+	var user User
+	user.Mobile = "15880199707"
+	user.Name = "xueg"
+	db.Mysql.Create(&user)
 }

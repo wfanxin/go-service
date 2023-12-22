@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/wfanxin/go-service/dao"
 	"github.com/wfanxin/go-service/db"
 	"github.com/wfanxin/go-service/models"
 )
@@ -46,10 +47,15 @@ func Router() *gin.Engine {
 		id, _ := strconv.Atoi(idstr)
 		user, _ := models.GetUser(id)
 
+		models.CreateUser()
+
 		c.JSON(http.StatusOK, gin.H{
 			"message": user,
 		})
 	})
+
+	// 数据库表创建
+	dao.Migrate()
 
 	return r
 }
