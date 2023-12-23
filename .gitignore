@@ -2,6 +2,7 @@
 .vscode
 *.exe
 
+logs/
 config/dev.go
 config/env.ini
 go.mod
